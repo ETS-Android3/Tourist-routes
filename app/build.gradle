@@ -45,11 +45,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
 
-    implementation 'com.hannesdorfmann.mosby3:mvi:3.1.2-SNAPSHOT'
-    implementation 'com.hannesdorfmann.mosby3:mvp:3.1.2-SNAPSHOT'
-    implementation 'com.hannesdorfmann.mosby3:viewstate:3.1.2-SNAPSHOT'
-
-    implementation 'com.hannesdorfmann.mosby3:mvp-lce:3.1.2-SNAPSHOT'
-    implementation 'com.hannesdorfmann.mosby3:mvp-nullobject-presenter:3.1.2-SNAPSHOT'
-    implementation 'com.hannesdorfmann.mosby3:mvp-queuing-presenter:3.1.2-SNAPSHOT'
+    implementation 'com.hannesdorfmann.mosby:mvp:2.0.1'
+    implementation 'com.hannesdorfmann.mosby:viewstate:2.0.1'
 }
