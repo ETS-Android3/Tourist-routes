@@ -7,6 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".main.MainActivity">
 
+    <android.support.v7.widget.RecyclerView
+        android:elevation="3dp"
+        android:layout_below="@+id/relativeToday"
+        android:id="@+id/cardList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal|top"
+        tools:ignore="UnknownId" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
