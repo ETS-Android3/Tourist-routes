@@ -1,6 +1,26 @@
 <resources>
     <string name="app_name">Tourist routes</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_showplace">Showplace</string>
+    <string name="title_was_place">Was in places</string>
+    <string name="add_place">Add showplace</string>
+
+    <string name="location_point">Location</string>
+    <string name="location_name">Location name</string>
+    <string name="location_time_work">Location working hours</string>
+    <string name="location_list_task">Location list task</string>
+    <string name="location_data_register">Location working hours</string>
+    <string name="location_data_was">Location working hours</string>
+
+    <string name="day_monday">Location working hours</string>
+    <string name="day_tuesday">Location working hours</string>
+    <string name="day_wednesday">Location working hours</string>
+    <string name="day_thursday">Location working hours</string>
+    <string name="day_friday">Location working hours</string>
+    <string name="day_saturday">Location working hours</string>
+    <string name="day_sanday">Location working hours</string>
+
+    <string name="start_work">Beginning of work</string>
+    <string name="finish_work">End of work</string>
+    <string name="title_activity_route">RouteActivity</string>
+
 </resources>
