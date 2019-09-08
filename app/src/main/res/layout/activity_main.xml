@@ -8,6 +8,19 @@
     tools:context=".main.MainActivity">
 
 
+    <FrameLayout
+        android:id="@+id/dynamic_fragment_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="top"
+        app:layout_constraintBottom_toTopOf="@+id/nav_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_heightPercent="80%"
+        app:layout_widthPercent="100%" />
+
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="0dp"
