@@ -15,7 +15,7 @@
     <permission
         android:name="com.example.permission.MAPS_RECEIVE"
         android:protectionLevel="signature"/>
-    <uses-permission android:name="com.example.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="com.example.permission.MAPS_RECEIVE"/>s
 
 
 
@@ -28,7 +28,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDCa5WRSMk3CrNSf3y5xbyQTvp1_zwuTtE" />
+            android:value="AIzaSyBMJe1Nnn6uDw1i3RgPn1wzH76o87ozYvM" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713" />

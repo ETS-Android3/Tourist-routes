@@ -57,4 +57,9 @@ dependencies {
     implementation 'com.hannesdorfmann.mosby:viewstate:2.0.1'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-ads:18.2.0'
+
+
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
+    // Google play services location dependency
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 }
