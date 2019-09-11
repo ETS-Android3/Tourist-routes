@@ -6,7 +6,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceViewHolder> implements com.honeyneutrons.undoswipe.helper.ItemTouchHelperAdapter {
+import ru.artemsh.touristRoutes.helper.ItemTouchHelperAdapter;
+
+public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceViewHolder> implements ItemTouchHelperAdapter {
     private final Context context;
 
     public ShowplaceAdapter(Context context) {

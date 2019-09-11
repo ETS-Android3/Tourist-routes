@@ -19,6 +19,7 @@ import ru.artemsh.touristRoutes.map.MapFragment;
 import ru.artemsh.touristRoutes.showplace.ShowplaceFragment;
 import ru.artemsh.touristRoutes.wasPlace.WasPlaceFramgent;
 
+
 public class MainActivity extends AppCompatActivity {
 
     private Fragment showplace;
@@ -32,9 +33,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         showplace = new ShowplaceFragment();
         wasPlace = new WasPlaceFramgent();
         map = new MapFragment();
+
         navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
@@ -45,23 +48,18 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {//getString(R.string.title_showplace)
                 case R.id.navigation_showplace:
-
+                    replaceFragment(showplace);
                     return true;
                 case R.id.navigation_was_place:
-
+                    replaceFragment(wasPlace);
                     return true;
                 case R.id.navigation_map:
-
+                    replaceFragment(map);
                     return true;
             }
             return false;
         }
     };
-
-    private void setDefaultFragment(Fragment defaultFragment)
-    {
-        this.replaceFragment(defaultFragment);
-    }
 
     // Replace current Fragment with the destination Fragment.
     public void replaceFragment(Fragment destFragment)

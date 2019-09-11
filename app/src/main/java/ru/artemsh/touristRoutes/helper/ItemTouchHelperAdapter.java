@@ -1,4 +1,4 @@
-package com.honeyneutrons.undoswipe.helper;
+package ru.artemsh.touristRoutes.helper;
 
 public interface ItemTouchHelperAdapter {
 
