@@ -20,11 +20,26 @@ public class Showplace {
     private WorkTime saturday;
     private WorkTime sunday;
 
-    private List<String> namePhoto = new ArrayList<>();
+    private List<String> namePhoto = new ArrayList<String>();
+    private List<ItemTask> itemTasks = new ArrayList<ItemTask>();
     private int numberOrder;
-
     private Date was;
 
+    public Showplace() {
+    }
+
+    public Showplace(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
+    public List<ItemTask> getItemTasks() {
+        return itemTasks;
+    }
+
+    public void setItemTasks(List<ItemTask> itemTasks) {
+        this.itemTasks = itemTasks;
+    }
 
     public List<String> getNamePhoto() {
         return namePhoto;
@@ -146,7 +161,7 @@ public class Showplace {
         this.namePhoto = namePhoto;
     }
 
-    public class WorkTime{
+    public static class WorkTime{
         private String startWork;
         private String finishWork;
 
@@ -172,6 +187,10 @@ public class Showplace {
 
         public void setFinishWork(String finishWork) {
             this.finishWork = finishWork;
+        }
+
+        public String getButtonStr(){
+            return startWork +  "\n" +finishWork;
         }
     }
 }

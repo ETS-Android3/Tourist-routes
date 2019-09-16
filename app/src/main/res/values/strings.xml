@@ -2,8 +2,11 @@
     <string name="app_name">Tourist routes</string>
     <string name="title_showplace">Showplace</string>
     <string name="title_was_place">Was in places</string>
+    <string name="title_create_showplace">Create Showplace</string>
     <string name="title_map">Map</string>
     <string name="add_place">Add showplace</string>
+    <string name="set_the_time">Set the time</string>
+
 
     <string name="location_point">Location</string>
     <string name="location_name">Location name</string>
@@ -26,7 +29,7 @@
     <string name="day_short_thursday">Thu</string>
     <string name="day_short_friday">Fri</string>
     <string name="day_short_saturday">Sat</string>
-    <string name="day_short_sanday">Sun</string>
+    <string name="day_short_sunday">Sun</string>
 
     <string name="start_work">Beginning of work</string>
     <string name="finish_work">End of work</string>
@@ -36,5 +39,13 @@
     <string name="create_description_showplace">Description of the place</string>
     <string name="create_set_time">Set time</string>
     <string name="create_write_task">Write a task</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="save">Save</string>
+
+    <string name="dont_work">Dont work</string>
+
+    <string name="wait_determined_location">Wait determined location</string>
 
 </resources>

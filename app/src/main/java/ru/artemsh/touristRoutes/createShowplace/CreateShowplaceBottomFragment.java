@@ -1,0 +1,118 @@
+package ru.artemsh.touristRoutes.createShowplace;
+
+import android.app.AlertDialog;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import ru.artemsh.touristRoutes.R;
+import ru.artemsh.touristRoutes.database.IDatabase;
+import ru.artemsh.touristRoutes.model.Showplace;
+
+public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment implements SetTimeDialog.NoticeDialogListener{
+
+    @BindView(R.id.title_name)
+    EditText name;
+    @BindView(R.id.descr)
+    EditText descr;
+    @BindView(R.id.list_tasks)
+    LinearLayout listTasks;
+
+    private static Showplace showplace = new Showplace();
+    private static IDatabase IDatabase;
+
+
+    public static CreateShowplaceBottomFragment getInstance(Showplace showplaceOld, IDatabase database) {
+        if (showplaceOld != null){
+            showplace  = showplaceOld;
+        }else{
+            showplace  = new Showplace();
+        }
+
+        IDatabase = database;
+        return new CreateShowplaceBottomFragment();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.create_showplace, container, false);
+        ButterKnife.bind(this, view);
+        name.setText(showplace.getTitle());
+        descr.setText(showplace.getDescription());
+
+        for (int i=0;i<showplace.getItemTasks().size();i++){
+            View vv = View.inflate(getContext(), R.layout.item_task, null);
+
+            switch (showplace.getItemTasks().get(i).getStatusTask()){
+                case TERRIBLY:
+                    ((ImageView)vv.findViewById(R.id.image_view)).setImageResource(R.drawable.thumb_down);
+                    break;
+                case SUCCESFULLY:
+                    ((ImageView)vv.findViewById(R.id.image_view)).setImageResource(R.drawable.thumb_up);
+                    break;
+                case WAITING:
+                default:
+//                        ((ImageView)view.findViewById(R.id.image_view)).setImageResource(R.drawable.schedule);
+            }
+
+            ((EditText)vv.findViewById(R.id.edit_text)).setText(showplace.getItemTasks().get(i).getTas());
+            ((TextView)vv.findViewById(R.id.number_element)).setText(i+".");
+
+            listTasks.addView(vv);
+        }
+
+        return view;
+    }
+
+    @OnClick(R.id.save_but)
+    void onClickSaveBut(){
+        dismiss();
+    }
+
+    @OnClick(R.id.but_time)
+    void onCLickSetTime(){
+        SetTimeDialog dialog = new SetTimeDialog(this, showplace);
+        dialog.show(getFragmentManager(), "Set time");
+    }
+
+    @Override
+    public void onDialogPositiveClick(SetTimeDialog dialog) {
+        Showplace show = dialog.getSchedule();
+
+        showplace.setMonday(show.getMonday());
+        showplace.setTuesday(show.getTuesday());
+        showplace.setWednesday(show.getWednesday());
+        showplace.setThursday(show.getThursday());
+        showplace.setFriday(show.getFriday());
+        showplace.setSaturday(show.getSaturday());
+        showplace.setSunday(show.getSunday());
+
+        dialog.dismiss();
+    }
+
+    @Override
+    public void dismiss() {
+        save();
+        super.dismiss();
+    }
+
+    void save(){
+        showplace.setTitle(name.getText().toString());
+        showplace.setDescription(descr.getText().toString());
+    }
+}
