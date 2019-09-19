@@ -29,30 +29,11 @@ public class SetTimeDialog extends DialogFragment {
     public interface NoticeDialogListener {
         void onDialogPositiveClick(SetTimeDialog dialog);
     }
+    private Showplace showplace;
 
     public SetTimeDialog(NoticeDialogListener mListener, Showplace showplace) {
         this.mListener = mListener;
-
-        monStart.setText(showplace.getMonday().getStartWork());
-        monFinish.setText(showplace.getMonday().getFinishWork());
-
-        tueStart.setText(showplace.getTuesday().getStartWork());
-        tueFinish.setText(showplace.getTuesday().getFinishWork());
-
-        wedStart.setText(showplace.getWednesday().getStartWork());
-        wedFinish.setText(showplace.getWednesday().getFinishWork());
-
-        thuStart.setText(showplace.getThursday().getStartWork());
-        thuFinish.setText(showplace.getThursday().getFinishWork());
-
-        friStart.setText(showplace.getFriday().getStartWork());
-        friFinish.setText(showplace.getFriday().getFinishWork());
-
-        satStart.setText(showplace.getSaturday().getStartWork());
-        satFinish.setText(showplace.getSaturday().getFinishWork());
-
-        sunStart.setText(showplace.getSunday().getStartWork());
-        sunFinish.setText(showplace.getSunday().getFinishWork());
+        this.showplace = showplace;
     }
 
     NoticeDialogListener mListener;
@@ -102,7 +83,39 @@ public class SetTimeDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_set_time, null);
         builder.setView(view);
         ButterKnife.bind(this, view);
+        initBut();
         return builder.create();
+    }
+
+    private void initBut(){
+        monStart.setText(checkTime(showplace.getMonday().getStartWork()));
+        monFinish.setText(checkTime(showplace.getMonday().getFinishWork()));
+
+        tueStart.setText(checkTime(showplace.getTuesday().getStartWork()));
+        tueFinish.setText(checkTime(showplace.getTuesday().getFinishWork()));
+
+        wedStart.setText(checkTime(showplace.getWednesday().getStartWork()));
+        wedFinish.setText(checkTime(showplace.getWednesday().getFinishWork()));
+
+        thuStart.setText(checkTime(showplace.getThursday().getStartWork()));
+        thuFinish.setText(checkTime(showplace.getThursday().getFinishWork()));
+
+        friStart.setText(checkTime(showplace.getFriday().getStartWork()));
+        friFinish.setText(checkTime(showplace.getFriday().getFinishWork()));
+
+        satStart.setText(checkTime(showplace.getSaturday().getStartWork()));
+        satFinish.setText(checkTime(showplace.getSaturday().getFinishWork()));
+
+        sunStart.setText(checkTime(showplace.getSunday().getStartWork()));
+        sunFinish.setText(checkTime(showplace.getSunday().getFinishWork()));
+    }
+
+    private String checkTime(String time){
+        if (time.equals("")){
+            return getString(R.string.dont_work);
+        }else{
+            return time;
+        }
     }
 
     public Showplace getSchedule(){

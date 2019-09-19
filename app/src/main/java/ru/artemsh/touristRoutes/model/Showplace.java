@@ -1,36 +1,65 @@
 package ru.artemsh.touristRoutes.model;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Showplace {
-
+    private Integer id;
     private double lat;
     private double lng;
 
-    private String title;
-    private String description;
+    private String title = "";
+    private String description = "";
 
-    private WorkTime monday;
-    private WorkTime tuesday;
-    private WorkTime wednesday;
-    private WorkTime thursday;
-    private WorkTime friday;
-    private WorkTime saturday;
-    private WorkTime sunday;
+    private WorkTime monday = new WorkTime();
+    private WorkTime tuesday = new WorkTime();
+    private WorkTime wednesday = new WorkTime();
+    private WorkTime thursday = new WorkTime();
+    private WorkTime friday = new WorkTime();
+    private WorkTime saturday = new WorkTime();
+    private WorkTime sunday = new WorkTime();
 
     private List<String> namePhoto = new ArrayList<String>();
     private List<ItemTask> itemTasks = new ArrayList<ItemTask>();
+    private TypePlace place = TypePlace.SHOWPLACE;
     private int numberOrder;
     private Date was;
 
-    public Showplace() {
+    public Showplace(){
+
+    }
+
+    public Showplace(LatLng latLng) {
+        lat = latLng.latitude;
+        lng = latLng.longitude;
     }
 
     public Showplace(String title, String description) {
         this.title = title;
         this.description = description;
+    }
+
+    public TypePlace getPlace() {
+        return place;
+    }
+
+    public void setPlace(TypePlace place) {
+        this.place = place;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public LatLng getLatLng(){
+        return new LatLng(lat, lng);
     }
 
     public List<ItemTask> getItemTasks() {
@@ -161,9 +190,13 @@ public class Showplace {
         this.namePhoto = namePhoto;
     }
 
+    public enum TypePlace{
+        SHOWPLACE,PLACE
+    }
+
     public static class WorkTime{
-        private String startWork;
-        private String finishWork;
+        private String startWork = "";
+        private String finishWork = "";
 
         public WorkTime() {
         }

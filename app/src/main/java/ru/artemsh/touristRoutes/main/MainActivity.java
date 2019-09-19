@@ -19,6 +19,7 @@ import android.view.View;
 
 import ru.artemsh.touristRoutes.R;
 import ru.artemsh.touristRoutes.createShowplace.CreateShowplaceBottomFragment;
+import ru.artemsh.touristRoutes.database.DBHelper;
 import ru.artemsh.touristRoutes.database.IDatabase;
 import ru.artemsh.touristRoutes.database.LocalDatabase;
 import ru.artemsh.touristRoutes.map.CustomMarkerClusteringDemoActivity;
@@ -44,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
 
         ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 123);
 
-        database = new LocalDatabase();
+        database = new DBHelper(getBaseContext());
 
         showplace = new ShowplaceFragment(database);
         wasPlace = new WasPlaceFramgent(database);
-        map = new CustomMarkerClusteringDemoActivity();
+        map = new CustomMarkerClusteringDemoActivity(database);
 
         navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

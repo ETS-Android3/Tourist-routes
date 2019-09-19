@@ -1,6 +1,7 @@
 package ru.artemsh.touristRoutes.helper;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
@@ -12,12 +13,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
@@ -29,7 +34,11 @@ import java.util.Locale;
 import java.util.Random;
 
 import ru.artemsh.touristRoutes.R;
+import ru.artemsh.touristRoutes.createShowplace.CreateShowplaceBottomFragment;
+import ru.artemsh.touristRoutes.database.IDatabase;
+import ru.artemsh.touristRoutes.map.CustomMarkerClusteringDemoActivity;
 import ru.artemsh.touristRoutes.map.Person;
+import ru.artemsh.touristRoutes.model.Showplace;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static androidx.constraintlayout.widget.Constraints.TAG;
@@ -38,11 +47,20 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
     private GoogleMap mMap;
     private ClusterManager<Person> mClusterManager;
     private Random mRandom = new Random(1984);
-    private Context mContext;
+    private FragmentManager transaction;
+    private Context context;
+
     private LocationManager locationManager;
 
-    public MapCallback(Context context) {
-        this.mContext = context;
+    private IDatabase database;
+    List<Showplace> showplaces;
+
+
+    public MapCallback(FragmentManager transaction, IDatabase database, Context context) {
+        this.transaction = transaction;
+        this.database = database;
+        showplaces = database.getShowplaceAll();
+        this.context = context;
     }
 
     public GoogleMap getMap() {
@@ -56,30 +74,58 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
         }
         mMap = googleMap;
         mMap.getUiSettings().setAllGesturesEnabled(true);
-        CameraUpdate center=
-                CameraUpdateFactory.newLatLng(position());
-        CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
+        CameraUpdate center = CameraUpdateFactory.newLatLng(position());
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
         mMap.moveCamera(center);
         mMap.animateCamera(zoom);
         mMap.setMyLocationEnabled(true);
 
         MarkerOptions markerOptions = new MarkerOptions();
 
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                CreateShowplaceBottomFragment bottomSheetDialog = null;
+                for (Showplace place :
+                        showplaces) {
+                    if (place.getLatLng().equals(marker.getPosition())){
+                        bottomSheetDialog = CreateShowplaceBottomFragment.getInstance(place, database);
+                        break;
+                    }
+                }
+                if (bottomSheetDialog == null){
+                    bottomSheetDialog = CreateShowplaceBottomFragment.getInstance(new Showplace(marker.getPosition()), database);
+                }
+
+                bottomSheetDialog.show(transaction, context.getString(R.string.title_create_showplace));
+                return false;
+            }
+        });
+
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
                 mMap.clear();
+                showMarker();
+
                 markerOptions.position(point);
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(point));
                 mMap.addMarker(markerOptions);
-                String all_vals = String.valueOf(point);
-                String[] separated = all_vals.split(":");
-                String latlng[] = separated[1].split(",");
             }
         });
 
+
         mMap.clear();
+        showMarker();
     }
+    private void showMarker(){
+        for (Showplace place :
+                showplaces) {
+            mMap.addMarker(new MarkerOptions()
+                    .position(place.getLatLng()).title(place.getTitle()).zIndex(1.1f));
+        }
+    }
+
     @Override
     public boolean onClusterClick(Cluster<Person> cluster) {
 
@@ -102,27 +148,30 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
 
     @Override
     public void onClusterInfoWindowClick(Cluster<Person> cluster) {
+        System.out.println("onClusterInfoWindowClick");
         // Does nothing, but you could go to a list of the users.
     }
 
     @Override
     public boolean onClusterItemClick(Person item) {
+        System.out.println("onClusterItemClick");
         // Does nothing, but you could go into the user's profile page, for example.
         return false;
     }
 
     @Override
     public void onClusterItemInfoWindowClick(Person item) {
+        System.out.println("onClusterItemInfoWindowClick");
         // Does nothing, but you could go into the user's profile page, for example.
     }
 
 
     @SuppressLint("MissingPermission")
     private LatLng position() {
-        locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
         Location location= getLastBestLocation(locationManager);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
-        Toast.makeText(mContext, mContext.getResources().getText(R.string.wait_determined_location), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, context.getResources().getText(R.string.wait_determined_location), Toast.LENGTH_SHORT).show();
         return new LatLng(location.getLongitude(), location.getLatitude());
     }
 

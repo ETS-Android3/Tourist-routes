@@ -14,6 +14,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import butterknife.BindView;
@@ -23,7 +29,7 @@ import ru.artemsh.touristRoutes.R;
 import ru.artemsh.touristRoutes.database.IDatabase;
 import ru.artemsh.touristRoutes.model.Showplace;
 
-public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment implements SetTimeDialog.NoticeDialogListener{
+public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment implements SetTimeDialog.NoticeDialogListener, OnMapReadyCallback {
 
     @BindView(R.id.title_name)
     EditText name;
@@ -31,9 +37,13 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
     EditText descr;
     @BindView(R.id.list_tasks)
     LinearLayout listTasks;
+    @BindView(R.id.map)
+    MapView mapView;
+
+    GoogleMap map;
 
     private static Showplace showplace = new Showplace();
-    private static IDatabase IDatabase;
+    private static IDatabase iDatabase;
 
 
     public static CreateShowplaceBottomFragment getInstance(Showplace showplaceOld, IDatabase database) {
@@ -42,8 +52,7 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
         }else{
             showplace  = new Showplace();
         }
-
-        IDatabase = database;
+        iDatabase = database;
         return new CreateShowplaceBottomFragment();
     }
 
@@ -54,6 +63,10 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
         ButterKnife.bind(this, view);
         name.setText(showplace.getTitle());
         descr.setText(showplace.getDescription());
+
+        mapView.onCreate(null);
+        mapView.getMapAsync(this);
+
 
         for (int i=0;i<showplace.getItemTasks().size();i++){
             View vv = View.inflate(getContext(), R.layout.item_task, null);
@@ -69,7 +82,6 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
                 default:
 //                        ((ImageView)view.findViewById(R.id.image_view)).setImageResource(R.drawable.schedule);
             }
-
             ((EditText)vv.findViewById(R.id.edit_text)).setText(showplace.getItemTasks().get(i).getTas());
             ((TextView)vv.findViewById(R.id.number_element)).setText(i+".");
 
@@ -114,5 +126,21 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
     void save(){
         showplace.setTitle(name.getText().toString());
         showplace.setDescription(descr.getText().toString());
+        iDatabase.addShowplace(showplace);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        setMapLocation();
+    }
+
+    private void setMapLocation() {
+        if (map == null) return;
+
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(showplace.getLatLng(), 12.8f));
+        map.addMarker(new MarkerOptions().position(showplace.getLatLng()));
+
+        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
     }
 }

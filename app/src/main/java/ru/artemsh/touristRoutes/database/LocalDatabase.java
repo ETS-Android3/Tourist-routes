@@ -7,9 +7,7 @@ import ru.artemsh.touristRoutes.model.Showplace;
 
 public class LocalDatabase implements IDatabase {
 
-    private static List<Showplace> showplaces = new ArrayList<Showplace>(){{
-       add(new Showplace("title", "descr"));
-    }};
+    private static List<Showplace> showplaces = new ArrayList<Showplace>();
     private static List<Showplace> places = new ArrayList<>();
 
     @Override

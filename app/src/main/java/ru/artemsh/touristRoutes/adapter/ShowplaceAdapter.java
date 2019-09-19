@@ -16,7 +16,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
@@ -53,9 +60,11 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
         holder.name.setText(showplaces.get(position).getTitle());
         holder.descr.setText(showplaces.get(position).getDescription());
 
-        SupportMapFragment mapFragment = (SupportMapFragment) activity.getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(new MapCallback(activity));
+        if (holder.mapView != null) {
+            holder.mapView.onCreate(null);
+            holder.mapView.getMapAsync(holder);
+            holder.setLocation(showplaces.get(position).getLatLng());
+        }
 
         if (showplaces.get(position).getMonday()!=null){
             holder.monday.setText(showplaces.get(position).getMonday().getButtonStr());
@@ -123,9 +132,12 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
         Toast.makeText(activity, "onItemDis="+position, Toast.LENGTH_SHORT).show();
     }
 
-    static class PlaceViewHolder extends RecyclerView.ViewHolder{
+    static class PlaceViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
 
-        final View map;
+        final MapView mapView;
+        private LatLng latLng = null;
+        private GoogleMap map = null;
+
         final Button time;
         final LinearLayout imagesLayout;
         final TextView countImages;
@@ -145,11 +157,20 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
 
         final TextView endWork;
 
+        void setLocation(LatLng latLng){
+            this.latLng = latLng;
+            if (map!=null){
+                System.out.println("setPos="+latLng.toString());
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12.8f));
+                map.addMarker(new MarkerOptions().position(latLng));
+            }
+        }
+
         public PlaceViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            map = itemView.findViewById(R.id.map);
-            time = (Button) itemView.findViewById(R.id.but_time);
+            this.latLng = latLng;
+            mapView = itemView.findViewById(R.id.map);
+            time = itemView.findViewById(R.id.but_time);
             imagesLayout = itemView.findViewById(R.id.images_layout);
             countImages = itemView.findViewById(R.id.count_images);
             name = itemView.findViewById(R.id.title_name);
@@ -167,6 +188,16 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
 
             listTasks = itemView.findViewById(R.id.list_tasks);
             endWork = itemView.findViewById(R.id.end_work);
+        }
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            this.map = googleMap;
+            if (latLng!=null){
+                System.out.println("setPos="+latLng.toString());
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12.8f));
+                map.addMarker(new MarkerOptions().position(latLng));
+            }
         }
     }
 }
