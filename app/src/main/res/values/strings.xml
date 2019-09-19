@@ -2,7 +2,11 @@
     <string name="app_name">Tourist routes</string>
     <string name="title_showplace">Showplace</string>
     <string name="title_was_place">Was in places</string>
+    <string name="title_create_showplace">Create Showplace</string>
+    <string name="title_map">Map</string>
     <string name="add_place">Add showplace</string>
+    <string name="set_the_time">Set the time</string>
+
 
     <string name="location_point">Location</string>
     <string name="location_name">Location name</string>
@@ -11,16 +15,37 @@
     <string name="location_data_register">Location working hours</string>
     <string name="location_data_was">Location working hours</string>
 
-    <string name="day_monday">Location working hours</string>
-    <string name="day_tuesday">Location working hours</string>
-    <string name="day_wednesday">Location working hours</string>
-    <string name="day_thursday">Location working hours</string>
-    <string name="day_friday">Location working hours</string>
-    <string name="day_saturday">Location working hours</string>
-    <string name="day_sanday">Location working hours</string>
+    <string name="day_monday">Monday</string>
+    <string name="day_tuesday">Tuesday</string>
+    <string name="day_wednesday">Wednesday</string>
+    <string name="day_thursday">Thursday</string>
+    <string name="day_friday">Friday</string>
+    <string name="day_saturday">Saturday</string>
+    <string name="day_sanday">Sanday</string>
+
+    <string name="day_short_monday">Mon</string>
+    <string name="day_short_tuesday">Tue</string>
+    <string name="day_short_wednesday">Wed</string>
+    <string name="day_short_thursday">Thu</string>
+    <string name="day_short_friday">Fri</string>
+    <string name="day_short_saturday">Sat</string>
+    <string name="day_short_sunday">Sun</string>
 
     <string name="start_work">Beginning of work</string>
     <string name="finish_work">End of work</string>
     <string name="title_activity_route">RouteActivity</string>
+    
+    <string name="create_title_showplace">Title showplace</string>
+    <string name="create_description_showplace">Description of the place</string>
+    <string name="create_set_time">Set time</string>
+    <string name="create_write_task">Write a task</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="save">Save</string>
+
+    <string name="dont_work">Dont work</string>
+
+    <string name="wait_determined_location">Wait determined location</string>
 
 </resources>

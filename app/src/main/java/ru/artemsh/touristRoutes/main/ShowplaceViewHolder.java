@@ -6,8 +6,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ShowplaceViewHolder extends RecyclerView.ViewHolder implements
-        com.honeyneutrons.undoswipe.helper.ItemTouchHelperViewHolder, View.OnClickListener {
+public class ShowplaceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public ShowplaceViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -18,13 +17,13 @@ public class ShowplaceViewHolder extends RecyclerView.ViewHolder implements
 
     }
 
-    @Override
-    public void onItemSelected(Context context) {
-
-    }
-
-    @Override
-    public void onItemClear(Context context) {
-
-    }
+//    @Override
+//    public void onItemSelected(Context context) {
+//
+//    }
+//
+//    @Override
+//    public void onItemClear(Context context) {
+//
+//    }
 }
