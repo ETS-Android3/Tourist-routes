@@ -85,6 +85,13 @@ public class DBHelper extends SQLiteOpenHelper implements IDatabase{
     }
 
     @Override
+    public void delete(int id) {
+        db = this.getWritableDatabase();
+        db.delete(NAMEDATABASE, "id = " + id, null);
+        this.close();
+    }
+
+    @Override
     public void addShowplace(Showplace place) {
         add(place);
     }

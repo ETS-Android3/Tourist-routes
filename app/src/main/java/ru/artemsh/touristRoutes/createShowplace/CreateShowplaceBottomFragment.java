@@ -1,6 +1,5 @@
 package ru.artemsh.touristRoutes.createShowplace;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +8,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -18,7 +15,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -27,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ru.artemsh.touristRoutes.R;
 import ru.artemsh.touristRoutes.database.IDatabase;
+import ru.artemsh.touristRoutes.helper.ICallback;
 import ru.artemsh.touristRoutes.model.Showplace;
 
 public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment implements SetTimeDialog.NoticeDialogListener, OnMapReadyCallback {
@@ -44,15 +41,17 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
 
     private static Showplace showplace = new Showplace();
     private static IDatabase iDatabase;
+    private static ICallback callback;
 
 
-    public static CreateShowplaceBottomFragment getInstance(Showplace showplaceOld, IDatabase database) {
+    public static CreateShowplaceBottomFragment getInstance(Showplace showplaceOld, IDatabase database, ICallback iCallback) {
         if (showplaceOld != null){
             showplace  = showplaceOld;
         }else{
             showplace  = new Showplace();
         }
         iDatabase = database;
+        callback = iCallback;
         return new CreateShowplaceBottomFragment();
     }
 
@@ -95,6 +94,13 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
     void onClickSaveBut(){
         dismiss();
     }
+    @OnClick(R.id.delete_but)
+    void onClickDeleteBut(){
+        if (showplace.getId()!=null){
+            iDatabase.delete(showplace.getId());
+        }
+        dismiss();
+    }
 
     @OnClick(R.id.but_time)
     void onCLickSetTime(){
@@ -120,6 +126,8 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
     @Override
     public void dismiss() {
         save();
+        if (callback!=null)
+            callback.request();
         super.dismiss();
     }
 

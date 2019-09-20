@@ -30,6 +30,21 @@ public class LocalDatabase implements IDatabase {
     }
 
     @Override
+    public void delete(int id) {
+        for(int i=0;i<showplaces.size();i++){
+            if (showplaces.get(i).getId()==id){
+                showplaces.remove(i);
+            }
+        }
+
+        for(int i=0;i<places.size();i++){
+            if (places.get(i).getId()==id){
+                places.remove(i);
+            }
+        }
+    }
+
+    @Override
     public void addShowplace(Showplace showplace) {
         showplaces.add(showplace);
     }

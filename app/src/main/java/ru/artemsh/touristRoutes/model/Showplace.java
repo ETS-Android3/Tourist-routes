@@ -25,7 +25,7 @@ public class Showplace {
     private List<String> namePhoto = new ArrayList<String>();
     private List<ItemTask> itemTasks = new ArrayList<ItemTask>();
     private TypePlace place = TypePlace.SHOWPLACE;
-    private int numberOrder;
+    private Integer numberOrder;
     private Date was;
 
     public Showplace(){
@@ -78,11 +78,11 @@ public class Showplace {
         this.namePhoto = namePhoto;
     }
 
-    public int getNumberOrder() {
+    public Integer getNumberOrder() {
         return numberOrder;
     }
 
-    public void setNumberOrder(int numberOrder) {
+    public void setNumberOrder(Integer numberOrder) {
         this.numberOrder = numberOrder;
     }
 

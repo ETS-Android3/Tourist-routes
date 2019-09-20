@@ -13,13 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import ru.artemsh.touristRoutes.R;
 import ru.artemsh.touristRoutes.adapter.PlaceAdapter;
-import ru.artemsh.touristRoutes.adapter.ShowplaceAdapter;
 import ru.artemsh.touristRoutes.database.IDatabase;
 
 public class WasPlaceFramgent extends Fragment {
     private IDatabase database;
     private RecyclerView recycler = null;
-    private ShowplaceAdapter adapter = null;
+    private PlaceAdapter adapter = null;
     private View view = null;
 
     public WasPlaceFramgent(IDatabase database) {
@@ -31,7 +30,7 @@ public class WasPlaceFramgent extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_showplaces, null);
         recycler = view.findViewById(R.id.recycler);
-        adapter = new ShowplaceAdapter(getActivity(), database);
+        adapter = new PlaceAdapter(getActivity(), database);
         recycler.setAdapter(adapter);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(mLayoutManager);

@@ -6,59 +6,62 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Collections;
 import java.util.List;
 
 import ru.artemsh.touristRoutes.R;
+import ru.artemsh.touristRoutes.createShowplace.SetTimeDialog;
 import ru.artemsh.touristRoutes.database.IDatabase;
 import ru.artemsh.touristRoutes.helper.ItemTouchHelperAdapter;
-import ru.artemsh.touristRoutes.helper.MapCallback;
-import ru.artemsh.touristRoutes.main.ShowplaceViewHolder;
-import ru.artemsh.touristRoutes.model.ItemTask;
 import ru.artemsh.touristRoutes.model.Showplace;
 
 public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.PlaceViewHolder> implements ItemTouchHelperAdapter {
 
     private IDatabase database;
-    private FragmentActivity activity;
     private List<Showplace> showplaces;
+    private final Fragment mContext;
 
-    public ShowplaceAdapter(FragmentActivity activity, IDatabase database) {
-        this.activity = activity;
+    public ShowplaceAdapter(Fragment context, IDatabase database) {
         this.database = database;
         showplaces = database.getShowplaceAll();
+        mContext = context;
     }
 
     @NonNull
     @Override
     public PlaceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        PlaceViewHolder holder = new PlaceViewHolder(LayoutInflater.from(activity).inflate(R.layout.item_place, parent, false));
-
-        return holder;
+        return new PlaceViewHolder(LayoutInflater.from(mContext.getContext())
+                .inflate(R.layout.item_showplace, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull PlaceViewHolder holder, int position) {
-        holder.name.setText(showplaces.get(position).getTitle());
+        //Прописать все методы!!
         holder.descr.setText(showplaces.get(position).getDescription());
+        holder.title.setText(showplaces.get(position).getTitle());
+        holder.endWork.setText("Время до конца");
+
+        if (showplaces.get(position).getNumberOrder()==null){
+            showplaces.get(position).setNumberOrder(position + 1);
+            holder.value.setText(String.valueOf(position + 1));
+            database.addShowplace(showplaces.get(position));
+        }else{
+            holder.value.setText(String.valueOf(showplaces.get(position).getNumberOrder()));
+        }
 
         if (holder.mapView != null) {
             holder.mapView.onCreate(null);
@@ -66,70 +69,74 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
             holder.setLocation(showplaces.get(position).getLatLng());
         }
 
-        if (showplaces.get(position).getMonday()!=null){
-            holder.monday.setText(showplaces.get(position).getMonday().getButtonStr());
-        }
-
-        if (showplaces.get(position).getTuesday()!=null){
-            holder.tuesday.setText(showplaces.get(position).getTuesday().getButtonStr());
-        }
-
-        if (showplaces.get(position).getWednesday()!=null){
-            holder.wednesday.setText(showplaces.get(position).getWednesday().getButtonStr());
-        }
-
-        if (showplaces.get(position).getThursday()!=null){
-            holder.thursday.setText(showplaces.get(position).getThursday().getButtonStr());
-        }
-
-        if (showplaces.get(position).getFriday()!=null){
-            holder.friday.setText(showplaces.get(position).getFriday().getButtonStr());
-        }
-
-        if (showplaces.get(position).getSaturday()!=null){
-            holder.saturday.setText(showplaces.get(position).getSaturday().getButtonStr());
-        }
-
-        if (showplaces.get(position).getSunday()!=null){
-            holder.sunday.setText(showplaces.get(position).getSunday().getButtonStr());
-        }
-
-        holder.countImages.setText(showplaces.get(position).getNamePhoto().size()+"");
-        for (int i=0;i<showplaces.get(position).getItemTasks().size();i++) {
-            View view = View.inflate(activity, R.layout.item_task, null);
-
-            switch (showplaces.get(position).getItemTasks().get(i).getStatusTask()){
-                case TERRIBLY:
-                    ((ImageView)view.findViewById(R.id.image_view)).setImageResource(R.drawable.thumb_down);
-                    break;
-                case SUCCESFULLY:
-                    ((ImageView)view.findViewById(R.id.image_view)).setImageResource(R.drawable.thumb_up);
-                    break;
-                case WAITING:
-                    default:
-//                        ((ImageView)view.findViewById(R.id.image_view)).setImageResource(R.drawable.schedule);
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                database.delete(showplaces.get(position).getId());
+                //Update list
             }
+        });
 
-            ((EditText)view.findViewById(R.id.edit_text)).setText(showplaces.get(position).getItemTasks().get(i).getTas());
-            ((TextView)view.findViewById(R.id.number_element)).setText(i+".");
+        holder.visitThere.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showplaces.get(position).setPlace(Showplace.TypePlace.PLACE);
+                database.addPlace(showplaces.get(position));
+                //Update list
+            }
+        });
 
-            holder.listTasks.addView(view);
-        }
+        holder.setTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SetTimeDialog dialog = new SetTimeDialog(new SetTimeDialog.NoticeDialogListener(){
+
+                    @Override
+                    public void onDialogPositiveClick(SetTimeDialog dialog) {
+                        Showplace show = dialog.getSchedule();
+
+                        showplaces.get(position).setMonday(show.getMonday());
+                        showplaces.get(position).setTuesday(show.getTuesday());
+                        showplaces.get(position).setWednesday(show.getWednesday());
+                        showplaces.get(position).setThursday(show.getThursday());
+                        showplaces.get(position).setFriday(show.getFriday());
+                        showplaces.get(position).setSaturday(show.getSaturday());
+                        showplaces.get(position).setSunday(show.getSunday());
+
+                        database.addShowplace(showplaces.get(position));
+                        dialog.dismiss();
+                    }
+                }, showplaces.get(position));
+                dialog.show(mContext.getFragmentManager(), "Set time");
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
+        if (showplaces==null)
+            return 0;
         return showplaces.size();
     }
 
     @Override
-    public void onItemMove(int fromPosition, int toPosition) {
-        Toast.makeText(activity, "onItem: from="+fromPosition+"; to="+toPosition, Toast.LENGTH_SHORT).show();
+    public void onItemDismiss(int position) {
+        showplaces.remove(position);
+        notifyItemRemoved(position);
     }
 
     @Override
-    public void onItemDismiss(int position) {
-        Toast.makeText(activity, "onItemDis="+position, Toast.LENGTH_SHORT).show();
+    public void onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(showplaces, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(showplaces, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
     }
 
     static class PlaceViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
@@ -138,24 +145,25 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
         private LatLng latLng = null;
         private GoogleMap map = null;
 
-        final Button time;
-        final LinearLayout imagesLayout;
-        final TextView countImages;
-        final TextView name;
+        final Button setTime;
+        final TextView title;
         final TextView descr;
-        final TextView fullText;
-
-        final Button monday;
-        final Button tuesday;
-        final Button wednesday;
-        final Button thursday;
-        final Button friday;
-        final Button saturday;
-        final Button sunday;
-
-        final LinearLayout listTasks;
-
         final TextView endWork;
+        final TextView value;
+        final Button delete;
+        final Button visitThere;
+
+        PlaceViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mapView = itemView.findViewById(R.id.map);
+            title = itemView.findViewById(R.id.title_name);
+            descr = itemView.findViewById(R.id.title_description);
+            endWork = itemView.findViewById(R.id.end_work);
+            setTime = itemView.findViewById(R.id.but_time);
+            value = itemView.findViewById(R.id.set_value);
+            delete = itemView.findViewById(R.id.delete);
+            visitThere = itemView.findViewById(R.id.visit_there);
+        }
 
         void setLocation(LatLng latLng){
             this.latLng = latLng;
@@ -165,36 +173,11 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
                 map.addMarker(new MarkerOptions().position(latLng));
             }
         }
-
-        public PlaceViewHolder(@NonNull View itemView) {
-            super(itemView);
-            this.latLng = latLng;
-            mapView = itemView.findViewById(R.id.map);
-            time = itemView.findViewById(R.id.but_time);
-            imagesLayout = itemView.findViewById(R.id.images_layout);
-            countImages = itemView.findViewById(R.id.count_images);
-            name = itemView.findViewById(R.id.title_name);
-            
-            descr = itemView.findViewById(R.id.title_description);
-            fullText = itemView.findViewById(R.id.full_text);
-            
-            monday = itemView.findViewById(R.id.monday);
-            tuesday = itemView.findViewById(R.id.tuesday);
-            wednesday = itemView.findViewById(R.id.wednesday);
-            thursday = itemView.findViewById(R.id.thursday);
-            friday = itemView.findViewById(R.id.friday);
-            saturday = itemView.findViewById(R.id.saturday);
-            sunday = itemView.findViewById(R.id.sunday);
-
-            listTasks = itemView.findViewById(R.id.list_tasks);
-            endWork = itemView.findViewById(R.id.end_work);
-        }
         @Override
         public void onMapReady(GoogleMap googleMap) {
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             this.map = googleMap;
             if (latLng!=null){
-                System.out.println("setPos="+latLng.toString());
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12.8f));
                 map.addMarker(new MarkerOptions().position(latLng));
             }

@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import javax.security.auth.callback.Callback;
+
 import ru.artemsh.touristRoutes.R;
 import ru.artemsh.touristRoutes.createShowplace.CreateShowplaceBottomFragment;
 import ru.artemsh.touristRoutes.database.IDatabase;
@@ -59,7 +61,6 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
     public MapCallback(FragmentManager transaction, IDatabase database, Context context) {
         this.transaction = transaction;
         this.database = database;
-        showplaces = database.getShowplaceAll();
         this.context = context;
     }
 
@@ -89,12 +90,12 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
                 for (Showplace place :
                         showplaces) {
                     if (place.getLatLng().equals(marker.getPosition())){
-                        bottomSheetDialog = CreateShowplaceBottomFragment.getInstance(place, database);
+                        bottomSheetDialog = CreateShowplaceBottomFragment.getInstance(place, database, callbackUpdateMap);
                         break;
                     }
                 }
                 if (bottomSheetDialog == null){
-                    bottomSheetDialog = CreateShowplaceBottomFragment.getInstance(new Showplace(marker.getPosition()), database);
+                    bottomSheetDialog = CreateShowplaceBottomFragment.getInstance(new Showplace(marker.getPosition()), database, callbackUpdateMap);
                 }
 
                 bottomSheetDialog.show(transaction, context.getString(R.string.title_create_showplace));
@@ -118,7 +119,17 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
         mMap.clear();
         showMarker();
     }
+
+    private ICallback callbackUpdateMap = new ICallback() {
+        @Override
+        public void request() {
+            System.out.println("request");
+            mMap.clear();
+            showMarker();
+        }
+    };
     private void showMarker(){
+        showplaces = database.getShowplaceAll();
         for (Showplace place :
                 showplaces) {
             mMap.addMarker(new MarkerOptions()

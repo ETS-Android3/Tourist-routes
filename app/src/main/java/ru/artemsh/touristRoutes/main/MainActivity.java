@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CreateShowplaceBottomFragment bottomSheetDialog = CreateShowplaceBottomFragment.getInstance(null, database);
+                CreateShowplaceBottomFragment bottomSheetDialog = CreateShowplaceBottomFragment.getInstance(null, database, null);
                 bottomSheetDialog.show(getSupportFragmentManager(), getResources().getString(R.string.title_create_showplace));
             }
         });

@@ -8,6 +8,7 @@ public interface IDatabase {
     List<Showplace> getShowplaceAll();
     List<Showplace> getPlaceAll();
     List<Showplace> getAll();
+    void delete(int id);
     void addShowplace(Showplace showplace);
     void addPlace(Showplace place);
 }
