@@ -26,6 +26,7 @@ public class Showplace {
     private List<ItemTask> itemTasks = new ArrayList<ItemTask>();
     private TypePlace place = TypePlace.SHOWPLACE;
     private Integer numberOrder;
+    private Integer raiting;
     private Date was;
 
     public Showplace(){
@@ -40,6 +41,14 @@ public class Showplace {
     public Showplace(String title, String description) {
         this.title = title;
         this.description = description;
+    }
+
+    public Integer getRaiting() {
+        return raiting;
+    }
+
+    public void setRaiting(Integer raiting) {
+        this.raiting = raiting;
     }
 
     public TypePlace getPlace() {
@@ -223,6 +232,13 @@ public class Showplace {
         }
 
         public String getButtonStr(){
+            if(startWork.equals("")&&finishWork.equals("")){
+                return "";
+            }else if (startWork.equals("")){
+                return finishWork;
+            } else if (finishWork.equals("")){
+                return startWork;
+            }
             return startWork +  "\n" +finishWork;
         }
     }

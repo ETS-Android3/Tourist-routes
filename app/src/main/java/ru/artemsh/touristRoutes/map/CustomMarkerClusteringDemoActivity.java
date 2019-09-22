@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 
 import ru.artemsh.touristRoutes.R;
+import ru.artemsh.touristRoutes.database.DBHelper;
 import ru.artemsh.touristRoutes.database.IDatabase;
 import ru.artemsh.touristRoutes.helper.MapCallback;
 import ru.artemsh.touristRoutes.helper.MultiDrawable;
@@ -29,20 +30,26 @@ import ru.artemsh.touristRoutes.model.Showplace;
 public class CustomMarkerClusteringDemoActivity extends Fragment{
 
     private IDatabase database;
-
-    public CustomMarkerClusteringDemoActivity(IDatabase database) {
-        this.database = database;
-    }
+    private MapCallback mapCallback;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, null);
 
+        database = DBHelper.initialization(getContext());
+
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
-        MapCallback mapCallback = new MapCallback(getFragmentManager(), database, getContext());
+        mapCallback = new MapCallback(getFragmentManager(), database, getContext());
         mapFragment.getMapAsync(mapCallback);
+
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapCallback.pause();
     }
 }

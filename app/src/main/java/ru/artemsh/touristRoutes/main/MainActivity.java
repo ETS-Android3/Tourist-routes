@@ -2,6 +2,7 @@ package ru.artemsh.touristRoutes.main;
 
 
 import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -10,6 +11,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -38,22 +40,25 @@ public class MainActivity extends AppCompatActivity {
 
     private IDatabase database;
 
+    /*
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 123);
+        database = DBHelper.initialization(getBaseContext());
 
-        database = new DBHelper(getBaseContext());
-
-        showplace = new ShowplaceFragment(database);
-        wasPlace = new WasPlaceFramgent(database);
-        map = new CustomMarkerClusteringDemoActivity(database);
+        showplace = new ShowplaceFragment();
+        wasPlace = new WasPlaceFramgent();
+        map = new CustomMarkerClusteringDemoActivity();
 
         navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        navView.setSelectedItemId(R.id.navigation_map);
+        navView.setSelectedItemId(R.id.navigation_showplace);
 
         actionButton = findViewById(R.id.floatingActionButton);
         actionButton.setOnClickListener(new View.OnClickListener() {
@@ -72,15 +77,17 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {//getString(R.string.title_showplace)
                 case R.id.navigation_showplace:
                     replaceFragment(showplace);
-                    return true;
+                    break;
                 case R.id.navigation_was_place:
                     replaceFragment(wasPlace);
-                    return true;
+                    break;
                 case R.id.navigation_map:
                     replaceFragment(map);
-                    return true;
+                    break;
+                    default:
+                        return false;
             }
-            return false;
+            return true;
         }
     };
 

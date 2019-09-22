@@ -17,15 +17,25 @@ import ru.artemsh.touristRoutes.model.Showplace;
 
 public class DBHelper extends SQLiteOpenHelper implements IDatabase{
 
+    private static DBHelper dbHelper = null;
+
     private SQLiteDatabase db;
     private String NAMEDATABASE = "place_table";
 
     private GsonBuilder builder = new GsonBuilder();
     private Gson gson = builder.create();
 
-    public DBHelper(Context context) {
+
+    private DBHelper(Context context) {
         // конструктор суперкласса
         super(context, "places", null, 1);
+    }
+
+    public static DBHelper initialization(Context context){
+        if (dbHelper==null){
+            return new DBHelper(context);
+        }
+        return dbHelper;
     }
 
     @Override
@@ -46,6 +56,7 @@ public class DBHelper extends SQLiteOpenHelper implements IDatabase{
         List<Showplace> all = getAll();
         List<Showplace> places = new ArrayList<>();
         for(int i=0;i<all.size();i++){
+            System.out.println("name="+all.get(i).getTitle()+"; number="+all.get(i).getNumberOrder());
             if (all.get(i).getPlace() == Showplace.TypePlace.SHOWPLACE){
                 places.add(all.get(i));
             }

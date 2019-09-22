@@ -24,11 +24,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 
 import ru.artemsh.touristRoutes.R;
+import ru.artemsh.touristRoutes.createShowplace.SetTimeDialog;
 import ru.artemsh.touristRoutes.database.IDatabase;
 import ru.artemsh.touristRoutes.helper.ItemTouchHelperAdapter;
 import ru.artemsh.touristRoutes.model.Showplace;
 
-public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder> implements ItemTouchHelperAdapter {
+public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder> {
 
     private IDatabase database;
     private FragmentActivity activity;
@@ -87,6 +88,38 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
             holder.sunday.setText(showplaces.get(position).getSunday().getButtonStr());
         }
 
+        if (showplaces.get(position).getRaiting() !=null){
+            for (int i=0;i<showplaces.get(position).getRaiting();i++){
+                holder.stars[i].setImageResource(R.drawable.star);
+            }
+        }
+
+        holder.time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SetTimeDialog dialog = new SetTimeDialog(new SetTimeDialog.NoticeDialogListener(){
+
+                    @Override
+                    public void onDialogPositiveClick(SetTimeDialog dialog) {
+                        Showplace show = dialog.getSchedule();
+
+                        showplaces.get(position).setMonday(show.getMonday());
+                        showplaces.get(position).setTuesday(show.getTuesday());
+                        showplaces.get(position).setWednesday(show.getWednesday());
+                        showplaces.get(position).setThursday(show.getThursday());
+                        showplaces.get(position).setFriday(show.getFriday());
+                        showplaces.get(position).setSaturday(show.getSaturday());
+                        showplaces.get(position).setSunday(show.getSunday());
+
+                        database.addShowplace(showplaces.get(position));
+                        notifyDataSetChanged();
+                        dialog.dismiss();
+                    }
+                }, showplaces.get(position));
+                dialog.show(activity.getSupportFragmentManager(), "Set time");
+            }
+        });
+
         holder.countImages.setText(showplaces.get(position).getNamePhoto().size()+"");
         for (int i=0;i<showplaces.get(position).getItemTasks().size();i++) {
             View view = View.inflate(activity, R.layout.item_task, null);
@@ -115,16 +148,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         return showplaces.size();
     }
 
-    @Override
-    public void onItemMove(int fromPosition, int toPosition) {
-        Toast.makeText(activity, "onItem: from="+fromPosition+"; to="+toPosition, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onItemDismiss(int position) {
-        Toast.makeText(activity, "onItemDis="+position, Toast.LENGTH_SHORT).show();
-    }
-
     static class PlaceViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
 
         final MapView mapView;
@@ -136,7 +159,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         final TextView countImages;
         final TextView name;
         final TextView descr;
-        final TextView fullText;
 
         final Button monday;
         final Button tuesday;
@@ -146,6 +168,8 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         final Button saturday;
         final Button sunday;
 
+        final ImageView[] stars;
+
         final LinearLayout listTasks;
 
         final TextView endWork;
@@ -153,7 +177,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         void setLocation(LatLng latLng){
             this.latLng = latLng;
             if (map!=null){
-                System.out.println("setPos="+latLng.toString());
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12.8f));
                 map.addMarker(new MarkerOptions().position(latLng));
             }
@@ -168,7 +191,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
             name = itemView.findViewById(R.id.title_name);
             
             descr = itemView.findViewById(R.id.title_description);
-            fullText = itemView.findViewById(R.id.full_text);
             
             monday = itemView.findViewById(R.id.monday);
             tuesday = itemView.findViewById(R.id.tuesday);
@@ -180,6 +202,14 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
 
             listTasks = itemView.findViewById(R.id.list_tasks);
             endWork = itemView.findViewById(R.id.end_work);
+
+            stars = new ImageView[]{
+                    itemView.findViewById(R.id.star1),
+                    itemView.findViewById(R.id.star2),
+                    itemView.findViewById(R.id.star3),
+                    itemView.findViewById(R.id.star4),
+                    itemView.findViewById(R.id.star5)
+            };
         }
 
         @Override

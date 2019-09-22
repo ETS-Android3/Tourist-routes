@@ -3,12 +3,14 @@ package ru.artemsh.touristRoutes.helper;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -20,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -28,29 +31,24 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
-import java.util.Random;
-
-import javax.security.auth.callback.Callback;
 
 import ru.artemsh.touristRoutes.R;
 import ru.artemsh.touristRoutes.createShowplace.CreateShowplaceBottomFragment;
 import ru.artemsh.touristRoutes.database.IDatabase;
-import ru.artemsh.touristRoutes.map.CustomMarkerClusteringDemoActivity;
 import ru.artemsh.touristRoutes.map.Person;
 import ru.artemsh.touristRoutes.model.Showplace;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class MapCallback implements LocationListener, OnMapReadyCallback, ClusterManager.OnClusterClickListener<Person>, ClusterManager.OnClusterInfoWindowClickListener<Person>, ClusterManager.OnClusterItemClickListener<Person>, ClusterManager.OnClusterItemInfoWindowClickListener<Person> {
     private GoogleMap mMap;
     private ClusterManager<Person> mClusterManager;
-    private Random mRandom = new Random(1984);
     private FragmentManager transaction;
     private Context context;
+    private SharedPreferences sPref;
+
+    private static final String[] CONSTANTS = {"last_lat","last_lon","last_zoom"};
 
     private LocationManager locationManager;
 
@@ -68,15 +66,38 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
         return mMap;
     }
 
+    public void pause(){
+        if (mMap!=null){
+            sPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor ed = sPref.edit();
+            ed.putFloat(CONSTANTS[0], (float) mMap.getCameraPosition().target.latitude);
+            ed.putFloat(CONSTANTS[1], (float) mMap.getCameraPosition().target.longitude);
+            ed.putFloat(CONSTANTS[2],  mMap.getCameraPosition().zoom);
+            ed.commit();
+        }
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         if (mMap != null) {
             return;
         }
         mMap = googleMap;
-        mMap.getUiSettings().setAllGesturesEnabled(true);
+
+        sPref = PreferenceManager.getDefaultSharedPreferences(context);//context.getPreferences(MODE_PRIVATE);
+        double lat = sPref.getFloat(CONSTANTS[0],0.0f);
+        double lon = sPref.getFloat(CONSTANTS[0],0.0f);
+        float zoomFloat = sPref.getFloat(CONSTANTS[0],0.0f);
+
         CameraUpdate center = CameraUpdateFactory.newLatLng(position());
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+
+        if (lat!=0.0f&&lon!=0.0f){
+            center = CameraUpdateFactory.newLatLng(new LatLng(lat, lon));
+            zoom = CameraUpdateFactory.zoomTo(zoomFloat);
+        }
+
+        mMap.getUiSettings().setAllGesturesEnabled(true);
         mMap.moveCamera(center);
         mMap.animateCamera(zoom);
         mMap.setMyLocationEnabled(true);
@@ -99,7 +120,7 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
                 }
 
                 bottomSheetDialog.show(transaction, context.getString(R.string.title_create_showplace));
-                return false;
+                return true;
             }
         });
 
@@ -129,11 +150,18 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
         }
     };
     private void showMarker(){
-        showplaces = database.getShowplaceAll();
+        showplaces = database.getAll();
         for (Showplace place :
                 showplaces) {
-            mMap.addMarker(new MarkerOptions()
-                    .position(place.getLatLng()).title(place.getTitle()).zIndex(1.1f));
+            if (place.getPlace()==Showplace.TypePlace.SHOWPLACE){
+                mMap.addMarker(new MarkerOptions()
+                        .position(place.getLatLng()).icon(BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).title(place.getTitle()).zIndex(1.1f));
+            }else{
+                mMap.addMarker(new MarkerOptions()
+                        .position(place.getLatLng()).icon(BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).title(place.getTitle()).zIndex(1.1f));
+            }
         }
     }
 

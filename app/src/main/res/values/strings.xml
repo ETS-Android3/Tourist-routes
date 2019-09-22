@@ -50,4 +50,10 @@
     <string name="delete">Delete</string>
     <string name="visited_there">Visited there</string>
 
+    <string name="rate">How many stars do you rate this place?</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="back">Back</string>
 </resources>

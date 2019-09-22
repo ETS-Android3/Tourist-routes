@@ -10,6 +10,12 @@
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin">
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:visibility="gone" />
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -69,7 +75,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="5dp"
-            android:layout_weight="0.15"
+            android:layout_weight="0.3"
             android:orientation="vertical">
 
             <TextView
@@ -106,8 +112,92 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.6"
-            android:orientation="vertical">
+            android:layout_weight="0.5"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/monday"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_corner"
+                android:text="20:00 23:00"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/tuesday"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_corner"
+                android:text="20:00 23:00"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/wednesday"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_corner"
+                android:text="20:00 23:00"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/thursday"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_corner"
+                android:text="20:00 23:00"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/friday"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_corner"
+                android:text="20:00 23:00"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/saturday"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_corner"
+                android:text="20:00 23:00"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/sunday"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_corner"
+                android:text="20:00 23:00"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp" />
 
             <TextView
                 android:id="@+id/end_work"
@@ -116,7 +206,8 @@
                 android:layout_gravity="bottom"
                 android:gravity="right"
                 android:text="время до конца работы"
-                android:textColor="#F07800" />
+                android:textColor="#F07800"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -134,12 +225,12 @@
                 android:layout_margin="2.5dp"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/set_time_corner_off"
+                android:background="@drawable/edittext_corner"
                 android:elevation="20dp"
                 android:foregroundGravity="center"
                 android:gravity="center"
                 android:text="@string/delete"
-                android:textColor="#FFFFFF"
+                android:textColor="#FFC78F"
                 tools:targetApi="lollipop" />
 
             <Button

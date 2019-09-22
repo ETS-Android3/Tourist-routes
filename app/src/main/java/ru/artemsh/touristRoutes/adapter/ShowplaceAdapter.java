@@ -26,6 +26,10 @@ import java.util.List;
 import ru.artemsh.touristRoutes.R;
 import ru.artemsh.touristRoutes.createShowplace.SetTimeDialog;
 import ru.artemsh.touristRoutes.database.IDatabase;
+import ru.artemsh.touristRoutes.dialog.DeletePlaceDialog;
+import ru.artemsh.touristRoutes.dialog.ToRateDialog;
+import ru.artemsh.touristRoutes.helper.ICallback;
+import ru.artemsh.touristRoutes.helper.ICallbackObject;
 import ru.artemsh.touristRoutes.helper.ItemTouchHelperAdapter;
 import ru.artemsh.touristRoutes.model.Showplace;
 
@@ -35,10 +39,19 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
     private List<Showplace> showplaces;
     private final Fragment mContext;
 
+    private ICallback callback;
+
     public ShowplaceAdapter(Fragment context, IDatabase database) {
         this.database = database;
         showplaces = database.getShowplaceAll();
         mContext = context;
+    }
+
+    public ShowplaceAdapter(Fragment context, IDatabase database, ICallback callback) {
+        this.database = database;
+        showplaces = database.getShowplaceAll();
+        mContext = context;
+        this.callback = callback;
     }
 
     @NonNull
@@ -48,41 +61,126 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
                 .inflate(R.layout.item_showplace, parent, false));
     }
 
+    public void update(Integer id, Integer value){
+        for(int i=0;i<showplaces.size();i++){
+            if (showplaces.get(i).getId() == id){
+                showplaces.get(i).setNumberOrder(value);
+                database.addShowplace(showplaces.get(i));
+                return;
+            }
+        }
+    }
+
+    private Showplace getNumerElement(int position){
+        for (int i=0;i<showplaces.size();i++){
+            if (showplaces.get(i).getNumberOrder()==null)
+                continue;
+            if (showplaces.get(i).getNumberOrder() == position + 1)
+                return showplaces.get(i);
+        }
+        for (int i=0;i<showplaces.size();i++){
+            if (showplaces.get(i).getNumberOrder() == null){
+                showplaces.get(i).setNumberOrder(position + 1);
+                database.addShowplace(showplaces.get(i));
+                return showplaces.get(i);
+            }
+        }
+        int i=1;
+        while (true){
+            for (int a=0;a<showplaces.size();a++){
+                if (position+i==showplaces.get(a).getNumberOrder()){
+                    showplaces.get(a).setNumberOrder(position+i);
+                    database.addShowplace(showplaces.get(a));
+                    return showplaces.get(a);
+                }
+            }
+            i++;
+        }
+    }
+
     @Override
     public void onBindViewHolder(@NonNull PlaceViewHolder holder, int position) {
-        //Прописать все методы!!
-        holder.descr.setText(showplaces.get(position).getDescription());
-        holder.title.setText(showplaces.get(position).getTitle());
-        holder.endWork.setText("Время до конца");
-
-        if (showplaces.get(position).getNumberOrder()==null){
-            showplaces.get(position).setNumberOrder(position + 1);
-            holder.value.setText(String.valueOf(position + 1));
-            database.addShowplace(showplaces.get(position));
+        Showplace showplace = getNumerElement(position);
+        if (showplace.getDescription()!=null){
+            holder.descr.setText(showplace.getDescription());
         }else{
-            holder.value.setText(String.valueOf(showplaces.get(position).getNumberOrder()));
+            holder.descr.setText("");
         }
+
+        if (showplace.getTitle()!=null){
+            holder.title.setText(showplace.getTitle());
+        }else{
+            holder.title.setText("");
+        }
+
+        if (showplace.getMonday()!=null){
+            holder.monday.setText(showplace.getMonday().getButtonStr());
+        }
+
+        if (showplace.getTuesday()!=null){
+            holder.tuesday.setText(showplace.getTuesday().getButtonStr());
+        }
+
+        if (showplace.getWednesday()!=null){
+            holder.wednesday.setText(showplace.getWednesday().getButtonStr());
+        }
+
+        if (showplace.getThursday()!=null){
+            holder.thursday.setText(showplace.getThursday().getButtonStr());
+        }
+
+        if (showplace.getFriday()!=null){
+            holder.friday.setText(showplace.getFriday().getButtonStr());
+        }
+
+        if (showplace.getSaturday()!=null){
+            holder.saturday.setText(showplace.getSaturday().getButtonStr());
+        }
+
+        if (showplace.getSunday()!=null){
+            holder.sunday.setText(showplace.getSunday().getButtonStr());
+        }
+
+        holder.value.setText(String.valueOf(showplace.getNumberOrder()));
+        holder.id.setText(String.valueOf(showplace.getId()));
 
         if (holder.mapView != null) {
             holder.mapView.onCreate(null);
             holder.mapView.getMapAsync(holder);
-            holder.setLocation(showplaces.get(position).getLatLng());
+            holder.setLocation(showplace.getLatLng());
         }
 
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                database.delete(showplaces.get(position).getId());
-                //Update list
+                DeletePlaceDialog deletePlaceDialog = new DeletePlaceDialog(mContext.getActivity(), new ICallback() {
+                    @Override
+                    public void request() {
+                        database.delete(showplace.getId());
+                        callback.request();
+                        showplaces = database.getShowplaceAll();
+                    }
+                });
+                deletePlaceDialog.show();
             }
         });
 
         holder.visitThere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showplaces.get(position).setPlace(Showplace.TypePlace.PLACE);
-                database.addPlace(showplaces.get(position));
-                //Update list
+                ToRateDialog dialog = new ToRateDialog(mContext.getActivity(), new ICallbackObject() {
+                    @Override
+                    public void request(Object object) {
+                        showplace.setPlace(Showplace.TypePlace.PLACE);
+                        showplace.setRaiting((Integer)object);
+                        database.addShowplace(showplace);
+                        callback.request();
+                        showplaces = database.getShowplaceAll();
+//                        updateList(showplace.getNumberOrder());
+                        notifyDataSetChanged();
+                    }
+                });
+                dialog.show();
             }
         });
 
@@ -95,22 +193,24 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
                     public void onDialogPositiveClick(SetTimeDialog dialog) {
                         Showplace show = dialog.getSchedule();
 
-                        showplaces.get(position).setMonday(show.getMonday());
-                        showplaces.get(position).setTuesday(show.getTuesday());
-                        showplaces.get(position).setWednesday(show.getWednesday());
-                        showplaces.get(position).setThursday(show.getThursday());
-                        showplaces.get(position).setFriday(show.getFriday());
-                        showplaces.get(position).setSaturday(show.getSaturday());
-                        showplaces.get(position).setSunday(show.getSunday());
+                        showplace.setMonday(show.getMonday());
+                        showplace.setTuesday(show.getTuesday());
+                        showplace.setWednesday(show.getWednesday());
+                        showplace.setThursday(show.getThursday());
+                        showplace.setFriday(show.getFriday());
+                        showplace.setSaturday(show.getSaturday());
+                        showplace.setSunday(show.getSunday());
 
-                        database.addShowplace(showplaces.get(position));
+                        database.addShowplace(showplace);
+                        notifyDataSetChanged();
                         dialog.dismiss();
                     }
-                }, showplaces.get(position));
+                }, showplace);
                 dialog.show(mContext.getFragmentManager(), "Set time");
             }
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -137,6 +237,13 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
             }
         }
         notifyItemMoved(fromPosition, toPosition);
+        callback.request();
+    }
+
+    public void onStop(){
+//        for (int i=0;i<showplaces.size();i++){
+//            database.addShowplace(showplaces.get(i));
+//        }
     }
 
     static class PlaceViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
@@ -150,8 +257,17 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
         final TextView descr;
         final TextView endWork;
         final TextView value;
+        final TextView id;
         final Button delete;
         final Button visitThere;
+
+        final Button monday;
+        final Button tuesday;
+        final Button wednesday;
+        final Button thursday;
+        final Button friday;
+        final Button saturday;
+        final Button sunday;
 
         PlaceViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -163,12 +279,20 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
             value = itemView.findViewById(R.id.set_value);
             delete = itemView.findViewById(R.id.delete);
             visitThere = itemView.findViewById(R.id.visit_there);
+            id = itemView.findViewById(R.id.id);
+
+            monday = itemView.findViewById(R.id.monday);
+            tuesday = itemView.findViewById(R.id.tuesday);
+            wednesday = itemView.findViewById(R.id.wednesday);
+            thursday = itemView.findViewById(R.id.thursday);
+            friday = itemView.findViewById(R.id.friday);
+            saturday = itemView.findViewById(R.id.saturday);
+            sunday = itemView.findViewById(R.id.sunday);
         }
 
         void setLocation(LatLng latLng){
             this.latLng = latLng;
             if (map!=null){
-                System.out.println("setPos="+latLng.toString());
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12.8f));
                 map.addMarker(new MarkerOptions().position(latLng));
             }

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import ru.artemsh.touristRoutes.R;
 import ru.artemsh.touristRoutes.adapter.PlaceAdapter;
+import ru.artemsh.touristRoutes.database.DBHelper;
 import ru.artemsh.touristRoutes.database.IDatabase;
 
 public class WasPlaceFramgent extends Fragment {
@@ -21,14 +22,13 @@ public class WasPlaceFramgent extends Fragment {
     private PlaceAdapter adapter = null;
     private View view = null;
 
-    public WasPlaceFramgent(IDatabase database) {
-        this.database = database;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_showplaces, null);
+        view = inflater.inflate(R.layout.fragment_showplaces, null);
+
+        database = DBHelper.initialization(getContext());
+
         recycler = view.findViewById(R.id.recycler);
         adapter = new PlaceAdapter(getActivity(), database);
         recycler.setAdapter(adapter);

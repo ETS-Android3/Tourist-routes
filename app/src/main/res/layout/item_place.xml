@@ -112,48 +112,25 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="5dp"
         android:layout_weight="0.3"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:lines="1"
-            android:maxLines="1"
-            android:minLines="1"
-            android:text="TextView"
-            android:textSize="30sp" />
-
-        <TextView
-            android:id="@+id/title_description"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:maxLines="4"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/full_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="FullText..."
-            android:textColor="#1E81F0" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:layout_marginBottom="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <Button
                     android:id="@+id/monday"
@@ -253,12 +230,21 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/end_work"
+            android:id="@+id/title_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="время до конца работы"
-            android:textColor="#F07800" />
+            android:lines="1"
+            android:maxLines="1"
+            android:minLines="1"
+            android:text="TextView"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/title_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxLines="4"
+            android:text="TextView" />
 
     </LinearLayout>
 </LinearLayout>

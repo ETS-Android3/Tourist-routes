@@ -78,7 +78,6 @@ public class SetTimeDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_set_time, null);
         builder.setView(view);
@@ -111,11 +110,7 @@ public class SetTimeDialog extends DialogFragment {
     }
 
     private String checkTime(String time){
-        if (time.equals("")){
-            return getString(R.string.dont_work);
-        }else{
-            return time;
-        }
+        return time;
     }
 
     public Showplace getSchedule(){
