@@ -2,7 +2,7 @@ package ru.artemsh.touristRoutes.model;
 
 public class ItemTask {
     private String tas;
-    private ItemTask.StatusTask statusTask =StatusTask.WAITING;
+    private ItemTask.StatusTask statusTask = StatusTask.WAITING;
     private int number;
 
     public enum  StatusTask {

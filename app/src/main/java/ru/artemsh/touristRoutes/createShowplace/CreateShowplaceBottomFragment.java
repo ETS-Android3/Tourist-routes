@@ -97,7 +97,7 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
     @OnClick(R.id.delete_but)
     void onClickDeleteBut(){
         if (showplace.getId()!=null){
-            iDatabase.delete(showplace.getId());
+            iDatabase.delete(showplace);
         }
         dismiss();
     }

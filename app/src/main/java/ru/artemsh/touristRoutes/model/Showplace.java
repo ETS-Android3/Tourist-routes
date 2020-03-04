@@ -6,27 +6,47 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+//@Entity(tableName = "showplace")
 public class Showplace {
+//    @PrimaryKey(autoGenerate = true)
     private Integer id;
+
+//    @ColumnInfo(name = "lat")
     private double lat;
+//    @ColumnInfo(name = "lng")
     private double lng;
 
+//    @ColumnInfo(name = "title")
     private String title = "";
+//    @ColumnInfo(name = "description")
     private String description = "";
 
+//    @ColumnInfo(name = "monday")
     private WorkTime monday = new WorkTime();
+//    @ColumnInfo(name = "tuesday")
     private WorkTime tuesday = new WorkTime();
+//    @ColumnInfo(name = "wednesday")
     private WorkTime wednesday = new WorkTime();
+//    @ColumnInfo(name = "thursday")
     private WorkTime thursday = new WorkTime();
+//    @ColumnInfo(name = "friday")
     private WorkTime friday = new WorkTime();
+//    @ColumnInfo(name = "saturday")
     private WorkTime saturday = new WorkTime();
+//    @ColumnInfo(name = "sunday")
     private WorkTime sunday = new WorkTime();
 
+//    @ColumnInfo(name = "namePhoto")
     private List<String> namePhoto = new ArrayList<String>();
+//    @ColumnInfo(name = "itemTasks")
     private List<ItemTask> itemTasks = new ArrayList<ItemTask>();
+//    @ColumnInfo(name = "place")
     private TypePlace place = TypePlace.SHOWPLACE;
+//    @ColumnInfo(name = "numberOrder")
     private Integer numberOrder;
+//    @ColumnInfo(name = "raiting")
     private Integer raiting;
+//    @ColumnInfo(name = "was")
     private Date was;
 
     public Showplace(){

@@ -8,7 +8,7 @@ import ru.artemsh.touristRoutes.model.Showplace;
 public class LocalDatabase implements IDatabase {
 
     private static List<Showplace> showplaces = new ArrayList<Showplace>();
-    private static List<Showplace> places = new ArrayList<>();
+    private static List<Showplace> places = new ArrayList<Showplace>();
 
     @Override
     public List<Showplace> getShowplaceAll() {
@@ -30,15 +30,32 @@ public class LocalDatabase implements IDatabase {
     }
 
     @Override
-    public void delete(int id) {
+    public void update(Showplace showplace) {
         for(int i=0;i<showplaces.size();i++){
-            if (showplaces.get(i).getId()==id){
+            if (showplaces.get(i).getId() == showplace.getId()){
+                showplaces.remove(i);
+                showplaces.add(i, showplace);
+            }
+        }
+
+        for(int i=0;i<places.size();i++){
+            if (places.get(i).getId() == showplace.getId()){
+                places.remove(i);
+                places.add(i, showplace);
+            }
+        }
+    }
+
+    @Override
+    public void delete(Showplace showplace) {
+        for(int i=0;i<showplaces.size();i++){
+            if (showplaces.get(i).getId() == showplace.getId()){
                 showplaces.remove(i);
             }
         }
 
         for(int i=0;i<places.size();i++){
-            if (places.get(i).getId()==id){
+            if (places.get(i).getId() == showplace.getId()){
                 places.remove(i);
             }
         }

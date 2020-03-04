@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -56,7 +55,7 @@ public class DBHelper extends SQLiteOpenHelper implements IDatabase{
         List<Showplace> all = getAll();
         List<Showplace> places = new ArrayList<>();
         for(int i=0;i<all.size();i++){
-            System.out.println("name="+all.get(i).getTitle()+"; number="+all.get(i).getNumberOrder());
+            System.out.println("name="+all.get(i).getTitle()+"; number="+all.get(i).getNumberOrder() + "; id=" +all.get(i).getId());
             if (all.get(i).getPlace() == Showplace.TypePlace.SHOWPLACE){
                 places.add(all.get(i));
             }
@@ -96,9 +95,23 @@ public class DBHelper extends SQLiteOpenHelper implements IDatabase{
     }
 
     @Override
-    public void delete(int id) {
+    public void update(Showplace showplace) {
         db = this.getWritableDatabase();
-        db.delete(NAMEDATABASE, "id = " + id, null);
+        ContentValues cv = new ContentValues();
+        cv.put("id", showplace.getId());
+        cv.put("place", gson.toJson(showplace));
+        db.update(NAMEDATABASE, cv, "id = ?", new String[] { showplace.getId().toString() });
+        this.close();
+    }
+
+    public void updatePos(int id, int pos){
+
+    }
+
+    @Override
+    public void delete(Showplace showplace) {
+        db = this.getWritableDatabase();
+        db.delete(NAMEDATABASE, "id = " + showplace.getId(), null);
         this.close();
     }
 
@@ -110,6 +123,7 @@ public class DBHelper extends SQLiteOpenHelper implements IDatabase{
     private void add(Showplace showplace){
         db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
+        cv.put("id", showplace.getId());
         cv.put("place", gson.toJson(showplace));
         if (showplace.getId() == null){
             db.insert(NAMEDATABASE, null, cv);

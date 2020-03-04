@@ -1,13 +1,10 @@
 package ru.artemsh.touristRoutes.adapter;
 
-import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -30,6 +27,7 @@ import ru.artemsh.touristRoutes.dialog.DeletePlaceDialog;
 import ru.artemsh.touristRoutes.dialog.ToRateDialog;
 import ru.artemsh.touristRoutes.helper.ICallback;
 import ru.artemsh.touristRoutes.helper.ICallbackObject;
+import ru.artemsh.touristRoutes.helper.ICallbackShowPlace;
 import ru.artemsh.touristRoutes.helper.ItemTouchHelperAdapter;
 import ru.artemsh.touristRoutes.model.Showplace;
 
@@ -38,19 +36,22 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
     private IDatabase database;
     private List<Showplace> showplaces;
     private final Fragment mContext;
+    private ShowplaceAdapter showplaceAdapter;
 
-    private ICallback callback;
+    private ICallbackShowPlace callback;
 
     public ShowplaceAdapter(Fragment context, IDatabase database) {
         this.database = database;
         showplaces = database.getShowplaceAll();
         mContext = context;
+        showplaceAdapter = this;
     }
 
-    public ShowplaceAdapter(Fragment context, IDatabase database, ICallback callback) {
+    public ShowplaceAdapter(Fragment context, IDatabase database, ICallbackShowPlace callback) {
         this.database = database;
         showplaces = database.getShowplaceAll();
         mContext = context;
+        showplaceAdapter = this;
         this.callback = callback;
     }
 
@@ -61,17 +62,17 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
                 .inflate(R.layout.item_showplace, parent, false));
     }
 
-    public void update(Integer id, Integer value){
+    public void update(Integer id, Integer position){
         for(int i=0;i<showplaces.size();i++){
             if (showplaces.get(i).getId() == id){
-                showplaces.get(i).setNumberOrder(value);
-                database.addShowplace(showplaces.get(i));
+                showplaces.get(i).setNumberOrder(position);
+                database.update(showplaces.get(i));
                 return;
             }
         }
     }
 
-    private Showplace getNumerElement(int position){
+    private Showplace getNumberElement(int position){
         for (int i=0;i<showplaces.size();i++){
             if (showplaces.get(i).getNumberOrder()==null)
                 continue;
@@ -81,7 +82,7 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
         for (int i=0;i<showplaces.size();i++){
             if (showplaces.get(i).getNumberOrder() == null){
                 showplaces.get(i).setNumberOrder(position + 1);
-                database.addShowplace(showplaces.get(i));
+                database.update(showplaces.get(i));
                 return showplaces.get(i);
             }
         }
@@ -89,8 +90,8 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
         while (true){
             for (int a=0;a<showplaces.size();a++){
                 if (position+i==showplaces.get(a).getNumberOrder()){
-                    showplaces.get(a).setNumberOrder(position+i);
-                    database.addShowplace(showplaces.get(a));
+                    showplaces.get(a).setNumberOrder(position+1);
+                    database.update(showplaces.get(a));
                     return showplaces.get(a);
                 }
             }
@@ -100,7 +101,7 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
 
     @Override
     public void onBindViewHolder(@NonNull PlaceViewHolder holder, int position) {
-        Showplace showplace = getNumerElement(position);
+        Showplace showplace = getNumberElement(position);
         if (showplace.getDescription()!=null){
             holder.descr.setText(showplace.getDescription());
         }else{
@@ -156,9 +157,11 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
                 DeletePlaceDialog deletePlaceDialog = new DeletePlaceDialog(mContext.getActivity(), new ICallback() {
                     @Override
                     public void request() {
-                        database.delete(showplace.getId());
-                        callback.request();
+                        database.delete(showplace);
+                        callback.request(showplaceAdapter);
                         showplaces = database.getShowplaceAll();
+//                        saveAll();
+                        notifyDataSetChanged();
                     }
                 });
                 deletePlaceDialog.show();
@@ -174,8 +177,9 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
                         showplace.setPlace(Showplace.TypePlace.PLACE);
                         showplace.setRaiting((Integer)object);
                         database.addShowplace(showplace);
-                        callback.request();
+                        callback.request(showplaceAdapter);
                         showplaces = database.getShowplaceAll();
+
 //                        updateList(showplace.getNumberOrder());
                         notifyDataSetChanged();
                     }
@@ -201,7 +205,7 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
                         showplace.setSaturday(show.getSaturday());
                         showplace.setSunday(show.getSunday());
 
-                        database.addShowplace(showplace);
+                        database.update(showplace);
                         notifyDataSetChanged();
                         dialog.dismiss();
                     }
@@ -222,7 +226,8 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
     @Override
     public void onItemDismiss(int position) {
         showplaces.remove(position);
-        notifyItemRemoved(position);
+        this.notifyItemRemoved(position-1);
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -237,13 +242,17 @@ public class ShowplaceAdapter extends RecyclerView.Adapter<ShowplaceAdapter.Plac
             }
         }
         notifyItemMoved(fromPosition, toPosition);
-        callback.request();
+        callback.request(showplaceAdapter);
     }
 
-    public void onStop(){
-//        for (int i=0;i<showplaces.size();i++){
-//            database.addShowplace(showplaces.get(i));
-//        }
+    public void setPosition(String idStr, int position) {
+        int id = Integer.parseInt(idStr);
+        for (int i=0;i<showplaces.size();i++){
+            if (showplaces.get(i).getId()==id){
+                showplaces.get(i).setNumberOrder(position);
+                database.update(showplaces.get(i));
+            }
+        }
     }
 
     static class PlaceViewHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {

@@ -37,4 +37,8 @@ public class WasPlaceFramgent extends Fragment {
         recycler.setItemAnimator(new DefaultItemAnimator());
         return view;
     }
+
+    public void setDatabase(IDatabase database){
+        this.database = database;
+    }
 }

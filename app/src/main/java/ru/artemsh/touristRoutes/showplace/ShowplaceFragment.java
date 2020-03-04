@@ -12,13 +12,11 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
-
 import ru.artemsh.touristRoutes.R;
 import ru.artemsh.touristRoutes.adapter.ShowplaceAdapter;
 import ru.artemsh.touristRoutes.database.DBHelper;
 import ru.artemsh.touristRoutes.database.IDatabase;
-import ru.artemsh.touristRoutes.helper.ICallback;
+import ru.artemsh.touristRoutes.helper.ICallbackShowPlace;
 import ru.artemsh.touristRoutes.helper.SimpleItemTouchHelperCallback;
 
 public class ShowplaceFragment extends Fragment {
@@ -48,12 +46,13 @@ public class ShowplaceFragment extends Fragment {
 
         return view;
     }
-    ICallback callback = new ICallback() {
+    ICallbackShowPlace callback = new ICallbackShowPlace() {
         @Override
-        public void request() {
+        public void request(ShowplaceAdapter showplaceAdapter) {
             for (int i=0;i<adapter.getItemCount();i++){
                 ((TextView)recycler.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.set_value)).setText(String.valueOf(i+1));
-
+                showplaceAdapter.setPosition(((TextView)recycler.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.id)).getText().toString(),
+                        i+1);
             }
         }
     };
@@ -61,9 +60,9 @@ public class ShowplaceFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        for (int i=0;i<adapter.getItemCount();i++){
-            adapter.update(Integer.parseInt(((TextView)recycler.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.id)).getText().toString()),
-                    Integer.parseInt(((TextView)recycler.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.set_value)).getText().toString()));
-        }
+//        for (int i=0;i<adapter.getItemCount();i++){
+//            adapter.update(Integer.parseInt(((TextView)recycler.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.id)).getText().toString()),
+//                    Integer.parseInt(((TextView)recycler.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.set_value)).getText().toString()));
+//        }
     }
 }
