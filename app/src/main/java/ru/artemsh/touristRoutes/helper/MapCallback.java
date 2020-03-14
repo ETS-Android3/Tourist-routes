@@ -1,22 +1,19 @@
 package ru.artemsh.touristRoutes.helper;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,9 +24,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
+import com.google.maps.GeoApiContext;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.TravelMode;
 
 import java.util.List;
 
@@ -53,6 +56,7 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
     private LocationManager locationManager;
 
     private IDatabase database;
+    private String myApiKeyGoogle = null;
     List<Showplace> showplaces;
 
 
@@ -60,6 +64,16 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
         this.transaction = transaction;
         this.database = database;
         this.context = context;
+
+        try {
+            ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            Bundle bundle = ai.metaData;
+            myApiKeyGoogle = bundle.getString("com.google.android.geo.API_KEY");
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("qwe", "Failed to load meta-data, NameNotFound: " + e.getMessage());
+        } catch (NullPointerException e) {
+            Log.e("qwe", "Failed to load meta-data, NullPointer: " + e.getMessage());
+        }
     }
 
     public GoogleMap getMap() {
@@ -87,10 +101,10 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
         sPref = PreferenceManager.getDefaultSharedPreferences(context);//context.getPreferences(MODE_PRIVATE);
         double lat = sPref.getFloat(CONSTANTS[0],0.0f);
         double lon = sPref.getFloat(CONSTANTS[0],0.0f);
-        float zoomFloat = sPref.getFloat(CONSTANTS[0],0.0f);
+        float zoomFloat = sPref.getFloat(CONSTANTS[0],30.0f);
 
         CameraUpdate center = CameraUpdateFactory.newLatLng(position());
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(30);
 
         if (lat!=0.0f&&lon!=0.0f){
             center = CameraUpdateFactory.newLatLng(new LatLng(lat, lon));
@@ -118,6 +132,8 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
                 if (bottomSheetDialog == null){
                     bottomSheetDialog = CreateShowplaceBottomFragment.getInstance(new Showplace(marker.getPosition()), database, callbackUpdateMap);
                 }
+                // https://habr.com/ru/post/341548/
+                // Написание построения маршрута
 
                 bottomSheetDialog.show(transaction, context.getString(R.string.title_create_showplace));
                 return true;
@@ -136,7 +152,6 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
             }
         });
 
-
         mMap.clear();
         showMarker();
     }
@@ -144,11 +159,33 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
     private ICallback callbackUpdateMap = new ICallback() {
         @Override
         public void request() {
-            System.out.println("request");
             mMap.clear();
             showMarker();
         }
     };
+
+    private void destination(double startLat, double startLong, double finishLat, double finishLong){
+        GeoApiContext context = new GeoApiContext().setApiKey(myApiKeyGoogle);
+
+        DirectionsApiRequest apiRequest = DirectionsApi.newRequest(context);
+        apiRequest.origin(new com.google.maps.model.LatLng(startLat, startLong));
+        apiRequest.destination(new com.google.maps.model.LatLng(finishLat, finishLong));
+        apiRequest.mode(TravelMode.DRIVING); //set travelling mode
+
+        apiRequest.setCallback(new com.google.maps.PendingResult.Callback<DirectionsResult>() {
+            @Override
+            public void onResult(DirectionsResult result) {
+                DirectionsRoute[] routes = result.routes;
+//                mMap.addPolyline(routes[0].overviewPolyline);
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+
+            }
+        });
+    }
+
     private void showMarker(){
         showplaces = database.getAll();
         for (Showplace place :
@@ -209,7 +246,7 @@ public class MapCallback implements LocationListener, OnMapReadyCallback, Cluste
     private LatLng position() {
         locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
         Location location= getLastBestLocation(locationManager);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 30, this);
         Toast.makeText(context, context.getResources().getText(R.string.wait_determined_location), Toast.LENGTH_SHORT).show();
         return new LatLng(location.getLongitude(), location.getLatitude());
     }
