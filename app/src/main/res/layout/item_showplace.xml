@@ -30,6 +30,13 @@
             app:liteMode="true"
             app:mapType="none" />
 
+        <TextView
+            android:id="@+id/id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:visibility="gone" />
+
         <Button
             android:id="@+id/but_time"
             android:layout_width="match_parent"
@@ -100,12 +107,6 @@
                         android:maxLines="4"
                         android:text="TextView" />
 
-                    <TextView
-                        android:id="@+id/id"
-                        android:layout_width="207dp"
-                        android:layout_height="120dp"
-                        android:text="TextView"
-                        android:visibility="visible" />
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
 
