@@ -104,10 +104,6 @@ public class DBHelper extends SQLiteOpenHelper implements IDatabase{
         this.close();
     }
 
-    public void updatePos(int id, int pos){
-
-    }
-
     @Override
     public void delete(Showplace showplace) {
         db = this.getWritableDatabase();
