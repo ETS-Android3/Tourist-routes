@@ -4,7 +4,6 @@ package ru.artemsh.touristRoutes.main;
 import android.Manifest;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,10 +13,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import ru.artemsh.touristRoutes.R;
-import ru.artemsh.touristRoutes.createShowplace.CreateShowplaceBottomFragment;
 import ru.artemsh.touristRoutes.database.DBHelper;
 import ru.artemsh.touristRoutes.database.IDatabase;
 import ru.artemsh.touristRoutes.map.CustomMarkerFragment;
@@ -34,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private Fragment map;
 
     private BottomNavigationView navView;
-    private FloatingActionButton actionButton;
 
     private IDatabase database;
 //    private AppRoomDatabase appDatabase;
@@ -61,15 +57,6 @@ public class MainActivity extends AppCompatActivity {
         navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navView.setSelectedItemId(R.id.navigation_showplace);
-
-        actionButton = findViewById(R.id.floatingActionButton);
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CreateShowplaceBottomFragment bottomSheetDialog = CreateShowplaceBottomFragment.getInstance(null, database, null);
-                bottomSheetDialog.show(getSupportFragmentManager(), getResources().getString(R.string.title_create_showplace));
-            }
-        });
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener

@@ -37,6 +37,17 @@
             android:textColor="#FFFFFF" />
 
         <Button
+            android:id="@+id/make_route_but"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/edittext_corner"
+            android:text="@string/route"
+            android:textColor="#FFC78F"
+            android:textSize="18sp" />
+
+        <Button
             android:id="@+id/delete_but"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

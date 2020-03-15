@@ -24,6 +24,7 @@ import butterknife.OnClick;
 import ru.artemsh.touristRoutes.R;
 import ru.artemsh.touristRoutes.database.IDatabase;
 import ru.artemsh.touristRoutes.helper.ICallback;
+import ru.artemsh.touristRoutes.helper.ICallbackRoute;
 import ru.artemsh.touristRoutes.model.Showplace;
 
 public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment implements SetTimeDialog.NoticeDialogListener, OnMapReadyCallback {
@@ -41,10 +42,11 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
 
     private static Showplace showplace = new Showplace();
     private static IDatabase iDatabase;
+    private static ICallbackRoute callbackRoute;
     private static ICallback callback;
 
 
-    public static CreateShowplaceBottomFragment getInstance(Showplace showplaceOld, IDatabase database, ICallback iCallback) {
+    public static CreateShowplaceBottomFragment getInstance(Showplace showplaceOld, IDatabase database, ICallback iCallback, ICallbackRoute iCallbackRoute) {
         if (showplaceOld != null){
             showplace  = showplaceOld;
         }else{
@@ -52,6 +54,7 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
         }
         iDatabase = database;
         callback = iCallback;
+        callbackRoute = iCallbackRoute;
         return new CreateShowplaceBottomFragment();
     }
 
@@ -65,7 +68,6 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
 
         mapView.onCreate(null);
         mapView.getMapAsync(this);
-
 
         for (int i=0;i<showplace.getItemTasks().size();i++){
             View vv = View.inflate(getContext(), R.layout.item_task, null);
@@ -100,6 +102,11 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
             iDatabase.delete(showplace);
         }
         dismiss();
+    }
+
+    @OnClick(R.id.make_route_but)
+    void onClickBuildRoute(){
+        callbackRoute.request(showplace.getLat(), showplace.getLng());
     }
 
     @OnClick(R.id.but_time)
@@ -150,5 +157,9 @@ public class CreateShowplaceBottomFragment extends BottomSheetDialogFragment imp
         map.addMarker(new MarkerOptions().position(showplace.getLatLng()));
 
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+    }
+
+    public Showplace getShowplace(){
+        return showplace;
     }
 }

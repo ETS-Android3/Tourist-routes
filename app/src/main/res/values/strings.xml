@@ -48,6 +48,7 @@
 
     <string name="wait_determined_location">Wait determined location</string>
     <string name="delete">Delete</string>
+    <string name="route">Route</string>
     <string name="visited_there">Visited there</string>
 
     <string name="rate">How many stars do you rate this place?</string>
