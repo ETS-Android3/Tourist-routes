@@ -2,6 +2,12 @@
   <AndroidXmlCodeStyleSettings>
     <option name="ARRANGEMENT_SETTINGS_MIGRATED_TO_191" value="true" />
   </AndroidXmlCodeStyleSettings>
+  <codeStyleSettings language="JAVA">
+    <option name="ALIGN_CONSECUTIVE_ASSIGNMENTS" value="true" />
+    <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
+    <option name="KEEP_SIMPLE_LAMBDAS_IN_ONE_LINE" value="true" />
+    <option name="KEEP_SIMPLE_CLASSES_IN_ONE_LINE" value="true" />
+  </codeStyleSettings>
   <codeStyleSettings language="XML">
     <indentOptions>
       <option name="CONTINUATION_INDENT_SIZE" value="4" />

@@ -1,0 +1,6 @@
+<application>
+  <component name="ExternalResourceManagerImpl">
+    <resource url="https://checkstyle.org/dtds/configuration_1_3.dtd" location="$USER_HOME$/Library/Caches/AndroidStudio3.5/extResources/385f0dd3_configuration_1_3.dtd" />
+    <ignored-resource url="https://www.puppycrawl.com/dtds/configuration_1_2.dtd" />
+  </component>
+</application>
