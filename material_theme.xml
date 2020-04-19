@@ -1,9 +1,10 @@
 <application>
   <component name="MaterialThemeConfig">
+    <option name="hideFileIcons" value="true" />
     <option name="isWizardShown" value="true" />
     <option name="pristineConfig" value="false" />
     <option name="tabOpacity" value="45" />
-    <option name="accentColor" value="e9c249" />
+    <option name="accentColor" value="009688" />
     <option name="userId" value="3853cec:16f58dd92a6:-8000" />
     <option name="version" value="3.10.0" />
   </component>
